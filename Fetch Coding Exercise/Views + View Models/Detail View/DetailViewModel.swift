@@ -11,11 +11,13 @@ import Combine
 /// The view model that powers the ``DetailView``
 class DetailViewModel: ObservableObject {
   
+  /// The ``ViewStatus`` telling the screen what view it will be displaying, depending on the status of the API call
+  @Published var viewStatus = ViewStatus.loading
   /// The ``Dessert`` that will be returned by TheMealDB's API
-  @Published var dessert: Dessert?
+  var dessert: Dessert?
   /// A readable string of an error that was returned
-  @Published var error: String = ""
-  /// The name of the Dessert to be displayed
+  var error: String = ""
+  /// The name of the ``Dessert`` to be displayed
   var name: String = ""
 
   private var cancellableSet: Set<AnyCancellable> = []
@@ -38,10 +40,11 @@ class DetailViewModel: ObservableObject {
       .sink(receiveCompletion: { completion in
         switch completion {
         case .failure(let error):
-          print(error)
           self.error = error.localizedDescription
+          self.viewStatus = .error
         case .finished:
           self.error = ""
+          self.viewStatus = .loaded
         }
       }, receiveValue: { dessert in
         self.dessert = dessert

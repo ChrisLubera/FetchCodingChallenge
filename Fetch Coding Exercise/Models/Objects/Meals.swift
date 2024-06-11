@@ -14,8 +14,6 @@ struct Meals: Codable {
 }
 
 /// An individual meal
-///
-/// 
 struct Meal: Codable, Identifiable {
   /// The randomly generated UUID of the Meal
   ///

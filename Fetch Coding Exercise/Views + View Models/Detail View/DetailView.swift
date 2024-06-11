@@ -13,67 +13,21 @@ struct DetailView: View {
   /// The ``DetailViewModel`` that will power the view
   @StateObject var viewModel: DetailViewModel
   
-  /// The body containing the information
+  /// The body containing either the ``ErrorView``, ``LoadingView`` or ``DetailLoadedView`` depending on the ``ViewStatus``
   var body: some View {
-    ZStack {
-      Color("LightBlue")
-        .ignoresSafeArea()
-      
-      if viewModel.dessert != nil {
-        ScrollView {
-          VStack {
-            AsyncImage(url: URL(string: viewModel.dessert!.returnImageURL())) { image in
-              image
-                .resizable()
-                .scaledToFill()
-            } placeholder: {
-              VStack {
-                ProgressView()
-              }
-            }
-            .frame(width: 200, height: 200)
-            .scaledToFill()
-            .padding(.bottom, 10)
-            
-            HStack {
-              Text("Ingredients")
-                .foregroundStyle(.white)
-                .font(.title)
-                .fontWeight(.semibold)
-              Spacer()
-            }
-            
-            ForEach(viewModel.dessert!.returnIngredients().indices, id: \.self) { index in
-              HStack {
-                Text(viewModel.dessert!.returnIngredients()[index].item)
-                  .foregroundStyle(.white)
-                Spacer()
-                Text(viewModel.dessert!.returnIngredients()[index].measure)
-                  .foregroundStyle(.white)
-              }
-              .background((index  % 2 == 0) ? Color("AppPink") : Color.clear)
-            }
-            
-            HStack {
-              Text("Instructions")
-                .foregroundStyle(.white)
-                .font(.title)
-                .fontWeight(.semibold)
-                .padding(.top, 10)
-              Spacer()
-            }
-            Text(viewModel.dessert!.returnInstructions())
-              .foregroundStyle(.white)
-          }
-          .padding()
-        }
+    switch viewModel.viewStatus {
+    case .loaded:
+      DetailLoadedView(dessert: viewModel.dessert!)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(viewModel.name)
-      } else {
-        ProgressView()
-          .navigationBarTitleDisplayMode(.inline)
-          .navigationTitle(viewModel.name)
-      }
+    case .loading:
+      LoadingView()
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(viewModel.name)
+    case .error:
+      ErrorView(errorText: viewModel.error)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(viewModel.name)
     }
   }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// The cell that will display a picture and the name of a ``Meal`` object
-struct Cell: View {
+struct MealCell: View {
   
   private let meal: Meal
   
@@ -52,10 +52,8 @@ struct Cell: View {
 }
 
 #Preview {
-  ZStack {
-    Color("LightBlue")
-    Cell(text: "Timbits", imageURL: "https://www.themealdb.com/images/media/meals/txsupu1511815755.jpg")
+    MealCell(meal: Meal(strMeal: "Meal Name", strMealThumb: "https://www.themealdb.com/images/media/meals/adxcbq1619787919.jpg", idMeal: "00000"))
       .padding()
-  }
+      .blueBackground()
   
 }

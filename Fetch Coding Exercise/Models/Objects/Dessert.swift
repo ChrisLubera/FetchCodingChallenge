@@ -13,6 +13,11 @@ struct Dessert: Codable {
   /// An Array containing the Dictionary where all of the keys and values are stored for the Dessert object
   private let meals: [[String: String?]]
   
+  /// Creates the dessert object
+  init(meals: [[String : String?]]) {
+    self.meals = meals
+  }
+  
   /// Gets the name of the Dessert
   /// - Returns: A String with the name of the desert
   func returnName() -> String {
@@ -46,7 +51,7 @@ struct Dessert: Codable {
       let ingredient = unwrapKey(key: ingredientString)
       let measure = unwrapKey(key: measurString)
       
-      if ingredient == "" {
+      if ingredient.isEmpty || ingredient.contains("Error unwrapping") {
         break
       }
       array.append(Ingredient(item: ingredient, measure: measure))

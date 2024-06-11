@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import Alamofire
 
+/// Calls TheMealDB's API
 struct Networking {
   
   /// Gets the list of meals from TheMealDB API
@@ -30,12 +31,14 @@ struct Networking {
   /// - Parameter id: A String containing the numberical 5 digit ID of the Dessert
   /// - Returns: An AnyPublisher that contains either a Dessert object, or an AFError, signaling an error of some sort
   func getDessert(id: String) -> AnyPublisher<Dessert, AFError> {
-    let baseURL = "https://themealdb.com/api/json/v1/1/lookup.php?i="
-    let appendedURL = baseURL + id
-    guard let url = URL(string: appendedURL) else {
-      return Fail(error: AFError.invalidURL(url: appendedURL))
+    let baseURL = "https://themealdb.com/api/json/v1/1/lookup.php?"
+
+    guard var url = URL(string: baseURL) else {
+      return Fail(error: AFError.invalidURL(url: baseURL))
         .eraseToAnyPublisher()
     }
+    let idQuery = URLQueryItem(name: "i", value: id)
+    url.append(queryItems: [idQuery])
     
     return AF.request(url)
       .validate()

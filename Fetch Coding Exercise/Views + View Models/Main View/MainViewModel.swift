@@ -11,10 +11,12 @@ import Combine
 /// The view model that powers the ``MainView``
 class MainViewModel: ObservableObject {
   
+  /// The ``ViewStatus`` telling the screen what view it will be displaying, depending on the status of the API call
+  @Published var viewStatus = ViewStatus.loading
   /// A list containing all of the ``Meal`` objects
-  @Published var meals: [Meal] = []
+  var meals: [Meal] = []
   /// A readable string of an error that was returned.
-  @Published var error: String = ""
+  var error: String = ""
   
   private var cancellableSet: Set<AnyCancellable> = []
   
@@ -30,10 +32,10 @@ class MainViewModel: ObservableObject {
       .sink(receiveCompletion: { completion in
         switch completion {
         case .failure(let error):
-          print(error)
           self.error = error.localizedDescription
+          self.viewStatus = .error
         case .finished:
-          self.error = ""
+          self.viewStatus = .loaded
         }
       }, receiveValue: { meals in
         self.meals = meals.meals.sorted(by: { $0.strMeal < $1.strMeal })

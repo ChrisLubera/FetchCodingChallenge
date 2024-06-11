@@ -20,35 +20,17 @@ struct MainView: View {
     UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white ]
   }
   
+  /// The body containing either the ``ErrorView``, ``LoadingView`` or ``MainLoadedView`` depending on the ``ViewStatus``
   var body: some View {
     NavigationStack {
-      ZStack {
-        Color("LightBlue")
-          .ignoresSafeArea()
-        if viewModel.error != "" {
-          Text(viewModel.error)
-            .foregroundStyle(.white)
-        } else if (viewModel.meals.isEmpty) {
-          VStack {
-            ProgressView()
-            Text("Loading Data...")
-              .foregroundStyle(.white)
-          }
-        } else {
-          ScrollView(showsIndicators: false) {
-            LazyVStack(alignment: .leading) {
-              ForEach(viewModel.meals) { item in
-                NavigationLink(destination: {
-                  DetailView(viewModel: DetailViewModel(id: item.idMeal, name: item.strMeal))
-                }, label: {
-                  Cell(text: item.strMeal, imageURL: item.strMealThumb)
-                    .padding(.bottom, 5)
-                })
-              }
-            }
-          }
+      switch viewModel.viewStatus {
+      case .loading:
+        LoadingView()
+      case .loaded:
+        MainLoadedView(meals: viewModel.meals)
           .navigationTitle("Desserts")
-        }
+      case .error:
+        ErrorView(errorText: viewModel.error)
       }
     }
     .accentColor(.white)
